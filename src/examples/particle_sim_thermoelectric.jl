@@ -1,7 +1,6 @@
 using Random
 using LinearAlgebra
 using Plots
-using Thermodynamics  
 
 
 function meshgrid(x, y)
