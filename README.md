@@ -257,5 +257,33 @@ function compute_entropy_rate(J1::Array{Float64, 2}, X1::Array{Float64, 2},
     return entropy_rate
 end
 ```
-_
 
+### Entropy Optimization 
+
+This is a custom built function in order to minimize the system's entropy based on Gradient Descent, firstly the derivatives are computed and then the results are inputed into gradient descent to find the most optimal entropy.
+
+```julia
+
+function entropy_gradient(J::Array{Float64, 2}, X::Array{Float64, 2})
+    ∇J = X  
+    ∇X = J  
+    return (∇J, ∇X)
+end
+
+function gradient_descent(J::Array{Float64, 2}, X::Array{Float64, 2}, learning_rate::Float64, max_iterations::Int)
+    for i in 1:max_iterations
+        ∇J, ∇X = entropy_gradient(J, X)
+        J -= learning_rate * ∇J
+        X -= learning_rate * ∇X
+        
+
+        @show compute_entropy(J, X)
+    end
+    return (J, X)
+end
+
+
+```
+
+
+### Stohcastic Thermodynamics
