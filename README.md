@@ -137,8 +137,28 @@ end
 ```
 Here after the matrix multiplication noise is added onto the resultant array as well
 
+### Time Dependent Onsager Relations
+
+This is the last type of Onsager relations. It is another spesific type of Onsager Relations which considers a time based gradient rather than a distance based gradient.
+
 ###### Important Note
-The 2D matrices can be multiplied with a 3D matricie if the first 2 dimensions are the same because in that case the first two dimensions of the 3D matricie are treated as a 2D matricie and the third dim is depth so each depth is considered as a 2D matricie and the amount of depth is the amount of 2D matricie multiplication done.
+The 2D matrices can be multiplied with a 3D matricie if the first 2 dimensions are the same because in that case the first two dimensions of the 3D matricie are treated as a 2D matricie and the third dim is depth so each depth is considered as a 2D matricie and the amount of depth is the amount of 2D matricie multiplication done. Below is the time spesific 3D matricie based function for time dependent Onsager calculation.
+
+```julia
+function compute_time_dependent_fluxes(L::TimeDependentOnsagerMatrix, F::Array{Float64, 2})
+    validate_dimensions_time_dependent(L, F)
+    num_vars, num_times = size(F)
+    J = zeros(num_vars, num_times)
+
+    for t in 1:num_times
+        J[:, t] = L.L[:, :, t] * F[:, t]
+    end
+
+    log_info("Time-dependent flux computation complete for $num_times time points.")
+    return J
+end
+
+```
 
 ## Entropy Production
 
