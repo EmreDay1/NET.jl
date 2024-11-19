@@ -164,7 +164,7 @@ The 2D matrices can be multiplied with a 3D matricie if the first 2 dimensions a
 
 ## Entropy Production
 
-Entropy, per unit thermal energy which can't be used for work, production is a fundamental concept in non equilibrium thermodynamics; entropy production describes the rate at which entropy is produced. Like Onsager relations it is driven by thermodynamical forces. This concept describes the dissapation of energy, energy which has become unable to be used in work. In this subsection there are 5 main files
+Entropy, per unit thermal energy which can't be used for work, production is a fundamental concept in non equilibrium thermodynamics; entropy production describes the rate at which entropy is produced. Like Onsager relations it is driven by thermodynamical forces. This concept describes the dissapation of energy, energy which has become unable to be used in work. In this subsection there are 4 main files
 
 ### Local Entropy Production
 
@@ -212,3 +212,26 @@ function visualize_local_entropy_production_heatmap(σ::Array{Float64, 1}, grid_
     display(p) 
 end
 ```
+
+### Time Dependent Entropy Production
+This class is for the computing of entropies based on fluxes and forces which are dependent on time. It consists of 2 functions one being the outer function containinig the ordinary differential equation and the solver and the inner one being the one which calculates the derivative of entropy production. There are three params for the outer functions. The outer function takes the time span, flux and force functions meanwhile the inner functions takes 2 parameters p which is a parameter to add coefficients to fluxes and t which is the time, used as input to the time dependent functions.
+
+```julia
+
+function analyze_time_dependent_entropy_production(J_func::Function, X_func::Function, t_span::Tuple{Float64, Float64})
+    function dσ_dt(p,t)
+        J = p * J_func(t)
+        X = X_func(t)
+        return sum(J .* X)
+    end
+
+    σ_0 = 0.0  
+    prob = ODEProblem(dσ_dt, σ_0, t_span)
+    sol = solve(prob, Tsit5(), reltol=1e-8, abstol=1e-8)
+    
+    return sol
+end
+
+```
+
+
