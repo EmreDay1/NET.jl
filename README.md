@@ -51,6 +51,54 @@ There are additional functions in the library in order to validate dimensions an
 
 #### Non-Linear Onsager Relations
 
-Non-linear onsager relations are another type of onsager relations which are frequently seen in thermodynamical system which are not in equilibrium. It's difference from linear Onsager is that higher order dimensions are in play in the calcuations on top of the linear relations. 
+Non-linear onsager relations are another type of onsager relations which are frequently seen in thermodynamical system which are not in equilibrium. It's difference from linear onsager is that higher order dimensions are in play in the calcuations on top of the linear relations (e.g. includes variables such as second order coupling). In this type of onsager relations there is only one type of Onsager relations because since this involves higher order dimensions as well the local thermal properties are a must for the calculations due to those being some of the higher properties used when a Non-linear onsager calculation is involved. Below is the matricie
+
+```julia
+mutable struct NonLinearOnsagerMatrix
+    L::Array{Float64, 3}
+end
+```
+The next structure in the code is the NonLinearFluxSystem structure which is a basic stroage structure to represent the forces in the system 
+```julia
+mutable struct NonLinearFluxSystem
+    matrix::NonLinearOnsagerMatrix
+    linear_forces::Array{Float64, 2}
+    nonlinear_forces::Vector{Array{Float64, 2}}
+end
+```
+
+Then after these structures are created again the flux computation function is yet again created, but only a 3D version of the array exist here; in the function firstly the linear fluxes are computed and broadcasted upon the total Onsager flux array and later the same process is repeated for the non-linear fluxes, below is the structure.
+
+```julia
+function compute_total_fluxes(system::NonLinearFluxSystem)
+    L = system.matrix.L
+    F = system.linear_forces
+    F_nl_list = system.nonlinear_forces
+
+    validate_dimensions_multinonlinear(system)
+
+    num_vars, num_points = size(F)
+    J_linear = zeros(num_vars, num_points)
+    J_total = zeros(num_vars, num_points)
+
+    for k in 1:num_points
+        J_linear[:, k] = L[:, :, k] * F[:, k]  # Linear contribution
+    end
+    J_total .= J_linear  # Initialize total flux
+
+    for F_nl in F_nl_list  # Add non-linear contributions
+        for k in 1:num_points
+            J_total[:, k] .+= L[:, :, k] * F_nl[:, k]
+        end
+    end
+
+    return J_total
+end
+
+```
+A similar dimension validation and visulization flux exists for this function as well
+
+
+
 
 
