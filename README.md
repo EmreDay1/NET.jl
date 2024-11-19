@@ -19,7 +19,7 @@ Onsager relations are relations which express the relationship between fluxes an
 
 There are 6 main files in the onsager relations subsection of the library being the spatial, linear, non Linear, time dependent, stohcastic onsager relations and coupled transport. In the following section the physics and programming of these classes will be explained.
 
-#### Linear Onsager Relations
+### Linear Onsager Relations
 
 In the class firstly the Onsager Matrix is initialized which is a necessity. Two types of Onsager Matrix exist in this context: 2D and 3D Onsager matrices. The main difference for these 2 types of Onsager Matrices is that a 3D Onsager Matrix accounts for local thermal propetries as well. 
 ```julia
@@ -49,7 +49,7 @@ end
 ```
 There are additional functions in the library in order to validate dimensions and do a quick visulization; they won't be explained here since they aren't completely related with the physics of the library- this will keep through for all files containing classes.
 
-#### Non-Linear Onsager Relations
+### Non-Linear Onsager Relations
 
 Non-linear onsager relations are another type of onsager relations which are frequently seen in thermodynamical system which are not in equilibrium. It's difference from linear onsager is that higher order dimensions are in play in the calcuations on top of the linear relations (e.g. includes variables such as second order coupling). In this type of onsager relations there is only one type of Onsager relations because since this involves higher order dimensions as well the local thermal properties are a must for the calculations due to those being some of the higher properties used when a Non-linear onsager calculation is involved. Below is the matricie
 
