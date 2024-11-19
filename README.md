@@ -29,7 +29,7 @@ end
 
 ```
 
-Next the onsager relation function is initialized where the matrices are multiplied by the current forces of the system to get a flux vector (generally heat flux). The sole difference between the 2D and 3D matrice based onsager is established via the slicing technique, in the 3D matrice the each point has a individual submatrice as well since their properties (coefficients etc) are different as well.
+Next the onsager relation function is initialized where the matrices are multiplied by the current forces of the system to get a flux vector (generally heat flux). The sole difference between the 2D and 3D matrice based onsager is established via the slicing technique, in the 3D array the each point has a individual "subarray" as well since their properties (coefficients etc) are different as well.
 
 ```julia
 function compute_fluxes(L::OnsagerMatrix, F::Array{Float64, 2})
@@ -51,7 +51,7 @@ There are additional functions in the library in order to validate dimensions an
 
 ### Non-Linear Onsager Relations
 
-Non-linear onsager relations are another type of onsager relations which are frequently seen in thermodynamical system which are not in equilibrium. It's difference from linear onsager is that higher order dimensions are in play in the calcuations on top of the linear relations (e.g. includes variables such as second order coupling). In this type of onsager relations there is only one type of Onsager relations because since this involves higher order dimensions as well the local thermal properties are a must for the calculations due to those being some of the higher properties used when a Non-linear onsager calculation is involved. Below is the matricie
+Non-linear onsager relations are another type of onsager relations which are frequently seen in thermodynamical system which are not in equilibrium. It's difference from linear onsager is that higher order dimensions are in play in the calcuations on top of the linear relations (e.g. includes variables such as second order coupling). In this type of onsager relations there is only one type of Onsager relations because since this involves higher order dimensions as well the local thermal properties are a must for the calculations due to those being some of the higher properties used when a Non-linear onsager calculation is involved. Below is the array
 
 ```julia
 mutable struct NonLinearOnsagerMatrix
@@ -98,7 +98,47 @@ end
 ```
 A similar dimension validation and visulization flux- like the one for the linear onsager- exists for this function as well
 
+### Stohcastic Onsager Relations
+
+Stohcastic onsager relations are spatial onsager relations which have a componenet of noise in the thermodynamical system as well. Again a 3D array is initalized for the computations of the stohcastic onsager relations
+
+```julia
+mutable struct StochasticOnsagerMatrix
+    L::Array{Float64, 3}
+end
+```
+
+In the computation function when the column vector J is generated the sole difference with the other computation functions is that in the computation process external noise is involved in the process as well. Again for the stroing of the data a 3D Array is used since stochastic onsager relations are a type of non linear onsager relations.
+
+```julia
+mutable struct StochasticOnsagerMatrix
+    L::Array{Float64, 3}
+end
+
+```
+After the storage array is defined the Stochastic flux computation function is defined. The main difference between the spatial linear onsager annd Stochastic onsager relations flux computation is know the external noise in the system is spesficially considered. 
+
+```julia
+
+function compute_stochastic_fluxes(L::StochasticOnsagerMatrix, F::Array{Float64, 2}, noise::Array{Float64, 2})
+    validate_dimensions_stochastic(L, F, noise)
+    num_vars, num_points = size(F)
+    J = zeros(num_vars, num_points)
+
+    for k in 1:num_points
+        J[:, k] = L.L[:, :, k] * F[:, k] + noise[:, k]
+    end
+
+    log_info("Stochastic flux computation complete for $num_points points with external noise.")
+    return J
+end
 
 
+```
+Here after the matrix multiplication noise is added onto the resultant array as well
 
+###### Important Note
+The 2D matrices can be multiplied with a 3D matricie if the first 2 dimensions are the same because in that case the first two dimensions of the 3D matricie are treated as a 2D matricie and the third dim is depth so each depth is considered as a 2D matricie and the amount of depth is the amount of 2D matricie multiplication done.
+
+## Entropy Production
 
