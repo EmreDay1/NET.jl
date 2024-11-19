@@ -1,5 +1,4 @@
 using LinearAlgebra
-using Logging
 using Plots
 
 """
@@ -13,54 +12,89 @@ mutable struct NonLinearOnsagerMatrix
 end
 
 """
-    compute_nonlinear_fluxes(L::NonLinearOnsagerMatrix, F::Array{Float64, 2}, F_nl::Array{Float64, 2}) -> Array{Float64, 2}
+    struct NonLinearFluxSystem
 
-Computes the fluxes (J) from forces (F) with non-linear contributions using the phenomenological coefficient matrix (L).
-- L: A `NonLinearOnsagerMatrix` type representing the phenomenological coefficients.
-- F: 2D array of linear forces at each spatial point.
-- F_nl: 2D array of non-linear corrections to the forces at each spatial point.
-Returns: A 2D array of computed fluxes with non-linear contributions.
+Represents a system of non-linear Onsager relations with multiple non-linear corrections.
+- matrix: A `NonLinearOnsagerMatrix` type for the phenomenological coefficients.
+- linear_forces: 2D array for linear forces across spatial points.
+- nonlinear_forces: Vector of 2D arrays for multiple non-linear force corrections.
 """
-function compute_nonlinear_fluxes(L::NonLinearOnsagerMatrix, F::Array{Float64, 2}, F_nl::Array{Float64, 2})
-    validate_dimensions_nonlinear(L, F, F_nl)
+mutable struct NonLinearFluxSystem
+    matrix::NonLinearOnsagerMatrix
+    linear_forces::Array{Float64, 2}
+    nonlinear_forces::Vector{Array{Float64, 2}}
+end
+
+"""
+    compute_total_fluxes(system::NonLinearFluxSystem) -> Array{Float64, 2}
+
+Computes the total fluxes for a system with multiple non-linear contributions.
+- system: A `NonLinearFluxSystem` object.
+Returns: A 2D array of computed fluxes with both linear and non-linear contributions.
+"""
+function compute_total_fluxes(system::NonLinearFluxSystem)
+
+    L = system.matrix.L
+    F = system.linear_forces
+    F_nl_list = system.nonlinear_forces
+
+  
+    validate_dimensions_multinonlinear(system)
+
     num_vars, num_points = size(F)
     J_linear = zeros(num_vars, num_points)
-    J_nonlinear = zeros(num_vars, num_points)
-    
+    J_total = zeros(num_vars, num_points)
+
+
     for k in 1:num_points
-        J_linear[:, k] = L.L[:, :, k] * F[:, k]
-        J_nonlinear[:, k] = L.L[:, :, k] * F_nl[:, k]
+        J_linear[:, k] = L[:, :, k] * F[:, k]
     end
-    
-    J_total = J_linear + J_nonlinear
-    log_info("Non-linear flux computation complete for $num_points points.")
+    J_total .= J_linear 
+
+
+    for F_nl in F_nl_list
+        for k in 1:num_points
+            J_total[:, k] .+= L[:, :, k] * F_nl[:, k]
+        end
+    end
+
+
     return J_total
 end
 
 """
-    validate_dimensions_nonlinear(L::NonLinearOnsagerMatrix, F::Array{Float64, 2}, F_nl::Array{Float64, 2})
+    validate_dimensions_multinonlinear(system::NonLinearFluxSystem)
 
-Ensures that the input dimensions of the matrix L, the linear force array F, and the non-linear force array F_nl match.
+Ensures that the input dimensions of the matrix L, linear forces F, and all non-linear force arrays match.
 Throws an error if the dimensions are not compatible.
 """
-function validate_dimensions_nonlinear(L::NonLinearOnsagerMatrix, F::Array{Float64, 2}, F_nl::Array{Float64, 2})
+function validate_dimensions_multinonlinear(system::NonLinearFluxSystem)
+    L = system.matrix.L
+    F = system.linear_forces
+    F_nl_list = system.nonlinear_forces
+
     num_vars, num_points = size(F)
-    if size(F) != size(F_nl)
-        throw(DimensionMismatch("F and F_nl must have the same dimensions."))
+
+   
+    if size(L, 1) != num_vars || size(L, 3) != num_points
+        throw(DimensionMismatch("L must match the number of variables and points in F."))
     end
-    if size(L.L, 1) != num_vars || size(L.L, 3) != num_points
-        throw(DimensionMismatch("L must match the number of variables and points in F and F_nl."))
+
+   
+    for F_nl in F_nl_list
+        if size(F) != size(F_nl)
+            throw(DimensionMismatch("All forces (F and F_nl) must have the same dimensions."))
+        end
     end
 end
 
 """
-    visualize_nonlinear_fluxes(J::Array{Float64, 2}, title_name::String)
+    visualize_total_fluxes(J::Array{Float64, 2}, title_name::String)
 
-Creates a heatmap visualization of the non-linear fluxes for easy interpretation.
+Creates a heatmap visualization of the total fluxes (including non-linear contributions).
 - J: 2D array of fluxes at each spatial point.
 """
-function visualize_nonlinear_fluxes(J::Array{Float64, 2}, title_name::String)
+function visualize_total_fluxes(J::Array{Float64, 2}, title_name::String)
     heatmap(J, xlabel="Grid Points", ylabel="Flux Variables",
             title=title_name, color=:plasma, colorbar=true)
 end
-
