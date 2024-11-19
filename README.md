@@ -47,3 +47,5 @@ function compute_fluxes(L::OnsagerMatrix, F::Array{Float64, 2})
     return J
 end
 ```
+There are additional functions in the library in order to validate dimensions and do a quick visulization; they won't be explained here since they aren't completely related with the physics of the library- this will keep through for all files containing classes.
+
