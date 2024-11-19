@@ -17,7 +17,7 @@ NET.jl is a Julia library built for the sole purpose of working with elements of
 
 Onsager relations are relations which express the relationship between fluxes and forces in a Thermodynamics system. Forces such as temperature gradients and concetration difference drive the fluxes, which are the determinanats of behaviors in the system, such as heat flux or diffusion (in the sense of movement of particles). 
 
-There are 5 main files in the onsager relations subsection of the library being the linear, non Linear, time dependent, stohcastic onsager relations and coupled transport. In the following section the physics and programming of these classes will be explained.
+There are 4 main files in the onsager relations subsection of the library being the linear, non Linear, time dependent and stohcastic onsager relations. In the following section the physics and programming of these classes will be explained.
 
 ### Linear Onsager Relations
 
@@ -141,8 +141,6 @@ Here after the matrix multiplication noise is added onto the resultant array as 
 
 This is the last type of Onsager relations. It is another spesific type of Onsager Relations which considers a time based gradient rather than a distance based gradient.
 
-###### Important Note
-The 2D matrices can be multiplied with a 3D matricie if the first 2 dimensions are the same because in that case the first two dimensions of the 3D matricie are treated as a 2D matricie and the third dim is depth so each depth is considered as a 2D matricie and the amount of depth is the amount of 2D matricie multiplication done. Below is the time spesific 3D matricie based function for time dependent Onsager calculation.
 
 ```julia
 function compute_time_dependent_fluxes(L::TimeDependentOnsagerMatrix, F::Array{Float64, 2})
@@ -160,5 +158,57 @@ end
 
 ```
 
+###### Important Note
+The 2D matrices can be multiplied with a 3D matricie if the first 2 dimensions are the same because in that case the first two dimensions of the 3D matricie are treated as a 2D matricie and the third dim is depth so each depth is considered as a 2D matricie and the amount of depth is the amount of 2D matricie multiplication done. Below is the time spesific 3D matricie based function for time dependent Onsager calculation.
+
+
 ## Entropy Production
 
+Entropy, per unit thermal energy which can't be used for work, production is a fundamental concept in non equilibrium thermodynamics; entropy production describes the rate at which entropy is produced. Like Onsager relations it is driven by thermodynamical forces. This concept describes the dissapation of energy, energy which has become unable to be used in work. In this subsection there are 5 main files
+
+### Local Entropy Production
+
+This is the entropy production for a local particle, it is calculated as the dot producted of the flux and force vectors
+
+```julia
+
+function compute_local_entropy_prozduction(J::Array{Float64, 2}, X::Array{Float64, 2})
+    validate_dimensions_entropy(J, X)
+    entropy_production = sum(J .* X, dims=1)  
+    log_info("Local entropy production calculation complete for $(size(J, 2)) grid points.")
+    return vec(entropy_production)  
+end
+```
+
+In addition to these the class includes a dimension validation and a visulization function in the form of a heatmap
+
+Dimension Validation:
+
+```julia
+function validate_dimensions_entropy(J::Array{Float64, 2}, X::Array{Float64, 2})
+    if size(J) != size(X)
+        throw(DimensionMismatch("J and X must have the same dimensions."))
+    end
+end
+```
+
+Visulization:
+
+```julia
+function visualize_local_entropy_production_heatmap(σ::Array{Float64, 1}, grid_points::Vector, title_name::String)
+
+    σ_matrix = reshape(σ, 1, length(σ))
+    
+    p = heatmap(
+        grid_points,
+        1:1,  
+        σ_matrix,
+        xlabel="Grid Points",
+        ylabel="Entropy Production",
+        title=title_name,
+        color=:plasma,
+        colorbar=true
+    )
+    display(p) 
+end
+```
