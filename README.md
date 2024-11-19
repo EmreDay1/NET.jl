@@ -82,11 +82,11 @@ function compute_total_fluxes(system::NonLinearFluxSystem)
     J_total = zeros(num_vars, num_points)
 
     for k in 1:num_points
-        J_linear[:, k] = L[:, :, k] * F[:, k]  # Linear contribution
+        J_linear[:, k] = L[:, :, k] * F[:, k] 
     end
-    J_total .= J_linear  # Initialize total flux
+    J_total .= J_linear 
 
-    for F_nl in F_nl_list  # Add non-linear contributions
+    for F_nl in F_nl_list  
         for k in 1:num_points
             J_total[:, k] .+= L[:, :, k] * F_nl[:, k]
         end
