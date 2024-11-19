@@ -14,38 +14,40 @@ mutable struct StochasticOnsagerMatrix
 end
 
 """
-    compute_stochastic_fluxes(L::StochasticOnsagerMatrix, F::Array{Float64, 2}, noise_level::Float64) -> Array{Float64, 2}
+    compute_stochastic_fluxes(L::StochasticOnsagerMatrix, F::Array{Float64, 2}, noise::Array{Float64, 2}) -> Array{Float64, 2}
 
 Computes the fluxes (J) with stochastic contributions at each point based on the forces (F) using the phenomenological matrix (L).
 - L: A `StochasticOnsagerMatrix` type representing the stochastic phenomenological coefficients.
 - F: 2D array representing forces at each point.
-- noise_level: Float representing the standard deviation of the Gaussian noise to be added.
+- noise: 2D array representing noise contributions at each point.
 Returns: A 2D array of computed fluxes with stochastic contributions.
 """
-function compute_stochastic_fluxes(L::StochasticOnsagerMatrix, F::Array{Float64, 2}, noise_level::Float64)
-    validate_dimensions_stochastic(L, F)
+function compute_stochastic_fluxes(L::StochasticOnsagerMatrix, F::Array{Float64, 2}, noise::Array{Float64, 2})
+    validate_dimensions_stochastic(L, F, noise)
     num_vars, num_points = size(F)
     J = zeros(num_vars, num_points)
 
     for k in 1:num_points
-        noise = noise_level * randn(num_vars)  # Generate Gaussian noise with mean 0 and specified std deviation
-        J[:, k] = L.L[:, :, k] * F[:, k] + noise
+        J[:, k] = L.L[:, :, k] * F[:, k] + noise[:, k]
     end
 
-    log_info("Stochastic flux computation complete for $num_points points with noise level $noise_level.")
+    log_info("Stochastic flux computation complete for $num_points points with external noise.")
     return J
 end
 
 """
-    validate_dimensions_stochastic(L::StochasticOnsagerMatrix, F::Array{Float64, 2})
+    validate_dimensions_stochastic(L::StochasticOnsagerMatrix, F::Array{Float64, 2}, noise::Array{Float64, 2})
 
-Ensures that the input dimensions of the matrix L and the force array F match.
+Ensures that the input dimensions of the matrix L, the force array F, and the noise array match.
 Throws an error if the dimensions are not compatible.
 """
-function validate_dimensions_stochastic(L::StochasticOnsagerMatrix, F::Array{Float64, 2})
+function validate_dimensions_stochastic(L::StochasticOnsagerMatrix, F::Array{Float64, 2}, noise::Array{Float64, 2})
     num_vars, num_points = size(F)
     if size(L.L, 1) != num_vars || size(L.L, 3) != num_points
         throw(DimensionMismatch("L must match the number of variables and points in F."))
+    end
+    if size(noise) != (num_vars, num_points)
+        throw(DimensionMismatch("Noise dimensions must match the dimensions of F (variables × points)."))
     end
 end
 
@@ -69,4 +71,3 @@ function visualize_stochastic_fluxes(J::Array{Float64, 2}, points::Vector, title
     )
     display(p)
 end
-
