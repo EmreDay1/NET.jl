@@ -51,4 +51,6 @@ There are additional functions in the library in order to validate dimensions an
 
 #### Non-Linear Onsager Relations
 
+Non-linear onsager relations are another type of onsager relations which are frequently seen in thermodynamical system which are not in equilibrium. It's difference from linear Onsager is that higher order dimensions are in play in the calcuations on top of the linear relations. 
+
 
