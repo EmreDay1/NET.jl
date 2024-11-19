@@ -17,7 +17,7 @@ NET.jl is a Julia library built for the sole purpose of working with elements of
 
 Onsager relations are relations which express the relationship between fluxes and forces in a Thermodynamics system. Forces such as temperature gradients and concetration difference drive the fluxes, which are the determinanats of behaviors in the system, such as heat flux or diffusion (in the sense of movement of particles). 
 
-There are 6 main files in the onsager relations subsection of the library being the spatial, linear, non Linear, time dependent, stohcastic onsager relations and coupled transport. In the following section the physics and programming of these classes will be explained.
+There are 5 main files in the onsager relations subsection of the library being the linear, non Linear, time dependent, stohcastic onsager relations and coupled transport. In the following section the physics and programming of these classes will be explained.
 
 ### Linear Onsager Relations
 
@@ -47,7 +47,7 @@ function compute_fluxes(L::OnsagerMatrix, F::Array{Float64, 2})
     return J
 end
 ```
-There are additional functions in the library in order to validate dimensions and do a quick visulization; they won't be explained here since they aren't completely related with the physics of the library- this will keep through for all files containing classes.
+There are additional functions in the library in order to validate dimensions and do a quick visulization; they won't be explained here since they aren't completely related with the physics of the library- this will keep through for all files containing classes. Also note that the 2D matrix is used to express simple linear onsager relationships, meanwhile the 3D Matrix linear onsager expresses another phenomena known as spatial onsager relations.
 
 ### Non-Linear Onsager Relations
 
@@ -96,7 +96,7 @@ function compute_total_fluxes(system::NonLinearFluxSystem)
 end
 
 ```
-A similar dimension validation and visulization flux exists for this function as well
+A similar dimension validation and visulization flux- like the one for the linear onsager- exists for this function as well
 
 
 
