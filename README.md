@@ -214,6 +214,7 @@ end
 ```
 
 ### Time Dependent Entropy Production
+
 This class is for the computing of entropies based on fluxes and forces which are dependent on time. It consists of 2 functions one being the outer function containinig the ordinary differential equation and the solver and the inner one being the one which calculates the derivative of entropy production. There are three params for the outer functions. The outer function takes the time span, flux and force functions meanwhile the inner functions takes 2 parameters p which is a parameter to add coefficients to fluxes and t which is the time, used as input to the time dependent functions.
 
 ```julia
@@ -234,4 +235,27 @@ end
 
 ```
 
+### Entropy Production Rate
+
+A function which computes the derivative of the entropy production based on entropy production in two points
+
+```julia
+function compute_entropy_rate(J1::Array{Float64, 2}, X1::Array{Float64, 2},
+                              J2::Array{Float64, 2}, X2::Array{Float64, 2}, Δt::Float64)
+    validate_dimensions_entropy(J1, X1)
+    validate_dimensions_entropy(J2, X2)
+
+
+    entropy_initial = sum(J1 .* X1, dims=1)
+    entropy_final = sum(J2 .* X2, dims=1)
+
+
+    Δentropy = sum(entropy_final) - sum(entropy_initial)
+    entropy_rate = Δentropy / Δt
+
+    log_info("Entropy rate calculation complete: rate = $(entropy_rate) per unit time.")
+    return entropy_rate
+end
+```
+_
 
