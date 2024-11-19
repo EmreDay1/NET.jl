@@ -7,7 +7,6 @@
 ### * Onsager Relations
 ### * Entropy Production
 ### * Stohcastic Thermodynamics
-### * Example Usage 1: Non Equilibrium Particle Simulation
 
 
 ## Introduction
