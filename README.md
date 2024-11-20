@@ -334,8 +334,46 @@ The Milstein equation starts is the Euler Maruyama, but with added noise. In the
 
 Fluctuation theorems are theorems which describe forces in NET systems. The fluctuation theorems in the library are Crooks and Jarzynski's equations (so far).
 
-### Jarzynsiki's equation
+#### Jarzynsiki's Theorem
 
 The Jarzynski's equation is defined as the work values are first multiplied by thermodynamic beta to scale them relative to the system's temperature. These scaled values are then used as exponents in the exponential weight calculation, and the resulting exponential weights are averaged together to form the ensemble average. Finally, the natural logarithm of this average is multiplied by negative one and divided by thermodynamic beta to estimate the equilibrium free energy difference.
 
 In the code the beta calculated is the inverse of thermal energy and used to define a relationship between thermal energy and temperature in the context of Jarzynski's equation. After that is completed to input into the equation the thermal noise with input beta is calculated. After these processes are complete the average work is computed via the Log-Sum-Exp trick(RealSofMax) in order to calculate it's stable average. Later, we calculate the free energy difference, which gives us systems ability to do useful work(negative okay, positive requires energy).
+
+#### Crook's Theorem
+Crooks' Theorem relates the probabilities of observing a certain amount of work in a forward process to the reverse process, stating that their ratio is governed by the work difference and the free energy change. It allows estimation of the equilibrium free energy difference (Δ𝐹) from the crossing point of the forward and reverse work distributions, where their probabilities are equal. 
+
+The forward work is from A to B while the reverse work is from B to A- B denoting final and A denoting initial. The formula for thr Crook's Theorem is probability of forward work divided by probability of inverse work is equal to e to the power Beta(reverse thermal energy times work, forward, minus free energy. Below is the code
+
+
+```julia
+function crooks_theorem(work_forward::Vector{Float64}, work_reverse::Vector{Float64}, T::Float64)
+    beta = 1 / (k_B * T)  
+
+    log_ratios = Float64[]  
+  
+    for (w_f, w_r) in zip(work_forward, work_reverse)
+        log_numerator = beta * w_f
+        log_denominator = beta * w_r
+
+        
+        if isfinite(log_numerator) && isfinite(log_denominator) && log_denominator > -700
+            push!(log_ratios, log_numerator - log_denominator)
+        end
+    end
+
+    
+    if isempty(log_ratios)
+        println("Warning: No valid log-ratios found; returning NaN.")
+        return NaN
+    end
+
+
+    mean_log_ratio = mean(log_ratios)
+    mean_ratio = exp(mean_log_ratio)
+    return mean_ratio
+end
+
+
+
+```
