@@ -1,21 +1,73 @@
+using LinearAlgebra
+using Logging
+using Random
+using Plots
+
 """
-    simulate_driven_system(drift, external_force, t_range)
+    struct StochasticOnsagerMatrix
 
-Simulates a system with a time-dependent external driving force.
-
-# Arguments
-- drift::Function: Drift function, `drift(x)`.
-- external_force::Function: Time-dependent force, `force(t)`.
-- t_range::Vector{Float64}: Time range.
-
-# Returns
-- solution::Matrix{Float64}: Time series of positions.
+Represents a phenomenological matrix for stochastic Onsager relations.
+- L: 3D array where L[:,:,k] is the matrix of coefficients at grid point or time step k.
 """
-function simulate_driven_system(drift, external_force, t_range)
-    positions = zeros(length(t_range))
-    for t in 2:length(t_range)
-        dt = t_range[t] - t_range[t-1]
-        positions[t] = positions[t-1] + drift(positions[t-1]) * dt + external_force(t_range[t-1]) * dt
+mutable struct StochasticOnsagerMatrix
+    L::Array{Float64, 3}
+end
+
+"""
+    compute_stochastic_fluxes(L::StochasticOnsagerMatrix, F::Array{Float64, 2}, noise::Array{Float64, 2}) -> Array{Float64, 2}
+
+Computes the fluxes (J) with stochastic contributions at each point based on the forces (F) using the phenomenological matrix (L).
+- L: A `StochasticOnsagerMatrix` type representing the stochastic phenomenological coefficients.
+- F: 2D array representing forces at each point.
+- noise: 2D array representing noise contributions at each point.
+Returns: A 2D array of computed fluxes with stochastic contributions.
+"""
+function compute_stochastic_fluxes(L::StochasticOnsagerMatrix, F::Array{Float64, 2}, noise::Array{Float64, 2})
+    validate_dimensions_stochastic(L, F, noise)
+    num_vars, num_points = size(F)
+    J = zeros(num_vars, num_points)
+
+    for k in 1:num_points
+        J[:, k] = L.L[:, :, k] * F[:, k] + noise[:, k]
     end
-    return positions
+
+    log_info("Stochastic flux computation complete for $num_points points with external noise.")
+    return J
+end
+
+"""
+    validate_dimensions_stochastic(L::StochasticOnsagerMatrix, F::Array{Float64, 2}, noise::Array{Float64, 2})
+
+Ensures that the input dimensions of the matrix L, the force array F, and the noise array match.
+Throws an error if the dimensions are not compatible.
+"""
+function validate_dimensions_stochastic(L::StochasticOnsagerMatrix, F::Array{Float64, 2}, noise::Array{Float64, 2})
+    num_vars, num_points = size(F)
+    if size(L.L, 1) != num_vars || size(L.L, 3) != num_points
+        throw(DimensionMismatch("L must match the number of variables and points in F."))
+    end
+    if size(noise) != (num_vars, num_points)
+        throw(DimensionMismatch("Noise dimensions must match the dimensions of F (variables × points)."))
+    end
+end
+
+"""
+    visualize_stochastic_fluxes(J::Array{Float64, 2}, points::Vector, title_name::String)
+
+Creates a heatmap to visualize stochastic fluxes over points (e.g., space or time).
+- J: 2D array of fluxes at each point.
+- points: Vector representing the x-axis (e.g., spatial or time points).
+"""
+function visualize_stochastic_fluxes(J::Array{Float64, 2}, points::Vector, title_name::String)
+    p = heatmap(
+        points,
+        1:size(J, 1),
+        J,
+        xlabel="Grid Points",
+        ylabel="Flux Variables",
+        title=title_name,
+        color=:inferno,
+        colorbar=true
+    )
+    display(p)
 end
