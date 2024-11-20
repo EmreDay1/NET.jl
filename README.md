@@ -380,6 +380,8 @@ The final output is the probability ratio of forward to reverse work- likelihood
 
 ### Langevin Dynamics
 
+<img width="678" alt="Ekran Resmi 2024-11-21 01 23 54" src="https://github.com/user-attachments/assets/597a6999-fbe4-46b8-b80a-b82018ee5acf">
+
 Langevin dynamics is a method in statistical mechanics and thermodynamics used to model the motion of particles in a fluid or heat bath. It combines deterministic forces, such as those arising from a potential field, with stochastic thermal forces to account for the random interactions with the surrounding medium. The dynamics are governed by a balance between inertia, friction, and noise, providing a realistic representation of particle behavior in non-equilibrium systems.
 
 In Langevin dynamics, a particle’s motion is influenced by deterministic forces from a potential field, frictional damping from its medium, and random thermal noise. These effects are modeled using the Langevin equation, which balances these forces to describe the system's trajectory. The thermal noise in this equation satisfies the fluctuation-dissipation theorem, ensuring that energy lost due to damping is replenished by thermal fluctuations, maintaining the system at equilibrium. This framework is used to study systems under non-equilibrium conditions, capturing both predictable and random behaviors.
@@ -417,4 +419,4 @@ function langevin_dynamics(num_steps::Int, dt::Float64, gamma::Float64, T::Float
     return time, positions, velocities
 end
 
-``
+```
