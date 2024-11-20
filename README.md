@@ -330,3 +330,12 @@ The Milstein equation starts is the Euler Maruyama, but with added noise. In the
 ```
 
 
+### Fluctuation Theorems
+
+Fluctuation theorems are theorems which describe forces in NET systems. The fluctuation theorems in the library are Crooks and Jarzynski's equations (so far).
+
+### Jarzynsiki's equation
+
+The Jarzynski's equation is defined as the work values are first multiplied by thermodynamic beta to scale them relative to the system's temperature. These scaled values are then used as exponents in the exponential weight calculation, and the resulting exponential weights are averaged together to form the ensemble average. Finally, the natural logarithm of this average is multiplied by negative one and divided by thermodynamic beta to estimate the equilibrium free energy difference.
+
+In the code beta is calculated is the reverse thermal energy
