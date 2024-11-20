@@ -374,6 +374,10 @@ function crooks_theorem(work_forward::Vector{Float64}, work_reverse::Vector{Floa
     return mean_ratio
 end
 
-
-
 ```
+The final output is the probability ratio of forward to reverse work- likelihood of each type of work happening.
+
+
+### Langevin Dynamics
+
+Langevin dynamics is a method in statistical mechanics and thermodynamics used to model the motion of particles in a fluid or heat bath. It combines deterministic forces, such as those arising from a potential field, with stochastic thermal forces to account for the random interactions with the surrounding medium. The dynamics are governed by a balance between inertia, friction, and noise, providing a realistic representation of particle behavior in non-equilibrium systems.
