@@ -385,3 +385,36 @@ Langevin dynamics is a method in statistical mechanics and thermodynamics used t
 In Langevin dynamics, a particle’s motion is influenced by deterministic forces from a potential field, frictional damping from its medium, and random thermal noise. These effects are modeled using the Langevin equation, which balances these forces to describe the system's trajectory. The thermal noise in this equation satisfies the fluctuation-dissipation theorem, ensuring that energy lost due to damping is replenished by thermal fluctuations, maintaining the system at equilibrium. This framework is used to study systems under non-equilibrium conditions, capturing both predictable and random behaviors.
 
 In the code, the BAOAB integrator is applied as a numerical scheme to solve the Langevin equation. The purpose of BAOAB is to accurately and stably simulate Langevin dynamics while preserving equilibrium properties like the Boltzmann distribution. The method splits the simulation into three steps: handling bath interactions (damping and noise), applying deterministic forces, and adjusting particle positions. This ensures each aspect of the dynamics is addressed separately and correctly, making BAOAB an ideal choice for simulations requiring long-term stability and physical consistency.
+
+```julia
+
+function langevin_dynamics(num_steps::Int, dt::Float64, gamma::Float64, T::Float64, mass::Float64,
+                           potential::Function, grad_potential::Function; dims::Int = 1)
+
+    time = collect(0:dt:(num_steps - 1) * dt)
+    positions = zeros(Float64, num_steps, dims)
+    velocities = zeros(Float64, num_steps, dims)
+
+    sigma = sqrt(2 * k_B * T * gamma / mass)
+    friction_factor = exp(-gamma * dt / mass)
+
+    positions[1, :] .= randn(dims)
+    velocities[1, :] .= sigma * randn(dims)
+
+    for i in 2:num_steps
+        x = positions[i - 1, :]
+        v = velocities[i - 1, :]
+
+        random_noise = sigma * sqrt(1 - friction_factor^2) * randn(dims)
+        v_half = v .* friction_factor .+ 0.5 * dt .* (-grad_potential(x) ./ mass) .+ random_noise
+        x_new = x .+ dt .* v_half
+        v_new = v_half .+ 0.5 * dt .* (-grad_potential(x_new) ./ mass)
+
+        positions[i, :] .= x_new
+        velocities[i, :] .= v_new
+    end
+
+    return time, positions, velocities
+end
+
+``
