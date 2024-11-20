@@ -338,4 +338,4 @@ Fluctuation theorems are theorems which describe forces in NET systems. The fluc
 
 The Jarzynski's equation is defined as the work values are first multiplied by thermodynamic beta to scale them relative to the system's temperature. These scaled values are then used as exponents in the exponential weight calculation, and the resulting exponential weights are averaged together to form the ensemble average. Finally, the natural logarithm of this average is multiplied by negative one and divided by thermodynamic beta to estimate the equilibrium free energy difference.
 
-In the code beta is calculated is the reverse thermal energy
+In the code the beta calculated is the inverse of thermal energy and used to define a relationship between thermal energy and temperature in the context of Jarzynski's equation. After that is completed to input into the equation the thermal noise with input beta is calculated. After these processes are complete the work values are computed via...
