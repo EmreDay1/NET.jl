@@ -286,3 +286,11 @@ end
 
 
 ### Stohcastic Thermodynamics
+
+Stochastic thermodynamics is a framework that generalizes classical thermodynamics to systems influenced by randomness and fluctuations. It provides tools to study the interplay between energy, entropy, and noise, enabling the analysis of small-scale systems or processes driven by stochastic dynamics.
+
+#### Stohcastic Driven Systems
+
+This class allows for certain conditions of a stohcastic enviroment to be simulated which is necessary for an physically accurate. Namely this function allows for the evolution of properties such as the diffusion process, randmom movement due to thermal fluctuations; drift, systematic and non-random motion caused by one gradient- force- overweighing the other foces and pushing the particle to one direction; Stohcastic Growth
+
+
