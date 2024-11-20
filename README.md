@@ -291,6 +291,38 @@ Stochastic thermodynamics is a framework that generalizes classical thermodynami
 
 #### Stohcastic Driven Systems
 
-This class allows for certain conditions of a stohcastic enviroment to be simulated which is necessary for an physically accurate. Namely this function allows for the evolution of properties such as the diffusion process, randmom movement due to thermal fluctuations; drift, systematic and non-random motion caused by one gradient- force- overweighing the other foces and pushing the particle to one direction; Stohcastic Growth
+This class allows for certain conditions of a stohcastic enviroment to be simulated which is necessary for an physically accurate. Namely this function allows for the evolution of properties such as the diffusion process, randmom movement due to thermal fluctuations; drift, systematic and non-random motion caused by one gradient- force- overweighing the other foces and pushing the particle to one direction; Stohcastic Growth, random growth and decay rates in particle properties; Nonlinear Dynamics of Noise, higher order interactions which affect behavior in the system.
+
+The function created for this functionality is the "simulate_stochastic_system" in this function firstly the dimensions for realizations(particle trajectories) and number of points are done. Later a empty array is initialized. After that the first raw is set to x0 since it is the initial position. Later a nested loop is initalized to itirate over the data to calculate the trajectories., with outer being number of trajectories and inner being num of time step. 
+
+In the loop for calculation there are two types SDE's in the loop the Euler Maruyama and the Milstein method to calculate the effect of stohcastic components on the system.
+
+###### Euler-Maruyama
+
+The Euler-Maruyama eqution is the rate of change of the force plus the positon at initla time plus the amplitue of the noise times the root of the time times random noise, Wiener process to be spesific, which is a driver in the stohcastic system as well. This equation is more well suited to stohcastic systems with weak noise since non-linear interactions are better captured in Milstein and since in small noises the comptutationally expensive calculation of Milstein aren't necessary the usage of Eular-Maruyama is more pragmatic. Below is the code for Euler Maruyama
+
+```julia
+
+            if method == "Euler-Maruyama"
+
+                trajectories[t, r] = trajectories[t - 1, r] +
+                                     drift(trajectories[t - 1, r]) * dt +
+                                     noise_amplitude(trajectories[t - 1, r]) * sqrt(dt) * ξ
+```
+
+###### Milstein
+
+The Milstein equation starts is the Euler Maruyama, but with added noise. In the Milstein equation on addition to the Euler Maruyama Equation the Derivative of the Noise amplitude is added, a higher order contribution of noise occurs making the relationship non-linear. Note that the derivation is based on Ito calculus.
+
+```julia
+ elseif method == "Milstein"
+
+                g = noise_amplitude(trajectories[t - 1, r])
+                g_prime = (noise_amplitude(trajectories[t - 1, r] + 1e-6) - g) / 1e-6 
+                trajectories[t, r] = trajectories[t - 1, r] +
+                                     drift(trajectories[t - 1, r]) * dt +
+                                     g * sqrt(dt) * ξ +
+                                     0.5 * g * g_prime * (ξ^2 - 1) * dt
+```
 
 
