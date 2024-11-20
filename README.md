@@ -299,6 +299,8 @@ In the loop for calculation there are two types SDE's in the loop the Euler Maru
 
 ###### Euler-Maruyama
 
+<img width="720" alt="Ekran Resmi 2024-11-20 12 22 12" src="https://github.com/user-attachments/assets/54f3a953-dcd6-4ce9-86d6-14cf9c124f8a">
+
 The Euler-Maruyama eqution is the rate of change of the force plus the positon at initla time plus the amplitue of the noise times the root of the time times random noise, Wiener process to be spesific, which is a driver in the stohcastic system as well. This equation is more well suited to stohcastic systems with weak noise since non-linear interactions are better captured in Milstein and since in small noises the comptutationally expensive calculation of Milstein aren't necessary the usage of Eular-Maruyama is more pragmatic. Below is the code for Euler Maruyama
 
 ```julia
@@ -311,6 +313,8 @@ The Euler-Maruyama eqution is the rate of change of the force plus the positon a
 ```
 
 ###### Milstein
+
+<img width="730" alt="Ekran Resmi 2024-11-20 12 22 33" src="https://github.com/user-attachments/assets/a27bc5b0-fdd6-4e1d-93a2-1c305354dcba">
 
 The Milstein equation starts is the Euler Maruyama, but with added noise. In the Milstein equation on addition to the Euler Maruyama Equation the Derivative of the Noise amplitude is added, a higher order contribution of noise occurs making the relationship non-linear. Note that the derivation is based on Ito calculus.
 
