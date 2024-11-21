@@ -340,6 +340,27 @@ The Jarzynski's equation is defined as the work values are first multiplied by t
 
 In the code the beta calculated is the inverse of thermal energy and used to define a relationship between thermal energy and temperature in the context of Jarzynski's equation. After that is completed to input into the equation the thermal noise with input beta is calculated. After these processes are complete the average work is computed via the Log-Sum-Exp trick(RealSofMax) in order to calculate it's stable average. Later, we calculate the free energy difference, which gives us systems ability to do useful work(negative okay, positive requires energy).
 
+```julia
+
+function jarzynski_equality(work_values::Vector{Float64}, T::Float64)
+    beta = 1 / (k_B * T)
+
+
+    max_work = maximum(-beta * work_values)
+    avg_exp_work = exp(-max_work) * mean(exp.(-beta * work_values .+ max_work))
+    
+   
+    if avg_exp_work <= 0 || isnan(avg_exp_work)
+        println("Warning: avg_exp_work is non-positive or NaN; adjusting to avoid -Inf result.")
+        avg_exp_work = 1e-15  # Small positive value
+    end
+    
+   
+    ΔF_estimated = -log(avg_exp_work) / beta
+    return ΔF_estimated
+end
+```
+
 #### Crook's Theorem
 Crooks' Theorem relates the probabilities of observing a certain amount of work in a forward process to the reverse process, stating that their ratio is governed by the work difference and the free energy change. It allows estimation of the equilibrium free energy difference (Δ𝐹) from the crossing point of the forward and reverse work distributions, where their probabilities are equal. 
 
