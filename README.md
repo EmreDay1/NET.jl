@@ -441,3 +441,11 @@ function langevin_dynamics(num_steps::Int, dt::Float64, gamma::Float64, T::Float
 end
 
 ```
+
+
+### Fokker Planck Theorem
+
+<img width="783" alt="Ekran Resmi 2024-11-22 11 15 54" src="https://github.com/user-attachments/assets/822f0f38-3894-47dd-a124-3be0b04e87f7">
+
+The Fokker Planck theorem describes the PDF(probability density function) of the system which describes the likelihood of the state(e.g. the mass shifting, T, P changing). It is the derivative of the Probability with respect to to time times the drift term which is the derative of the drift function times the probability density with respect to X times the diffusion term,previously explained.
+
