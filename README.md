@@ -403,34 +403,6 @@ The final output is the probability ratio of forward to reverse work- likelihood
 
 <img width="678" alt="Ekran Resmi 2024-11-21 01 23 54" src="https://github.com/user-attachments/assets/597a6999-fbe4-46b8-b80a-b82018ee5acf">
 
-## Main Equation:
-\[
-\mathbf{x}_{i+1} = \mathbf{x}_i + \Delta t \cdot \left( \mathbf{v}_{i-1} \cdot e^{-\frac{\gamma \Delta t}{m}} + \frac{\Delta t}{2m} \cdot \left(-\nabla U(\mathbf{x}_i)\right) + \eta \right)
-\]
-
-## Noise Equation:
-\[
-\eta = \sigma \cdot \sqrt{1 - e^{-2\frac{\gamma \Delta t}{m}}}
-\]
-
----
-
-## Legend:
-
-| **Symbol**      | **Description**                                                                                      |
-|------------------|----------------------------------------------------------------------------------------------------|
-| \(\mathbf{x}_i\) | Position of the particle at time step \(i\).                                                        |
-| \(\mathbf{x}_{i+1}\) | Position of the particle at the next time step \((i + 1)\).                                      |
-| \(\mathbf{v}_{i-1}\) | Velocity of the particle at the previous time step \((i - 1)\).                                  |
-| \(-\nabla U(\mathbf{x}_i)\) | Gradient of the potential energy \(U(\mathbf{x}_i)\), representing the deterministic force. |
-| \(\Delta t\)     | Time step size.                                                                                    |
-| \(\gamma\)       | Friction coefficient, representing the drag force acting on the particle.                          |
-| \(m\)            | Mass of the particle.                                                                              |
-| \(e^{-\frac{\gamma \Delta t}{m}}\) | Friction decay factor, describing how friction dampens velocity over time.         |
-| \(\eta\)         | Stochastic noise term.                                                                             |
-| \(\sigma\)       | Standard deviation of the noise: \(\sigma = \sqrt{\frac{2k_B T \gamma}{m}}\).                      |
-
-
 Langevin dynamics is a method in statistical mechanics and thermodynamics used to model the motion of particles in a fluid or heat bath. It combines deterministic forces, such as those arising from a potential field, with stochastic thermal forces to account for the random interactions with the surrounding medium. The dynamics are governed by a balance between inertia, friction, and noise, providing a realistic representation of particle behavior in non-equilibrium systems.
 
 In Langevin dynamics, a particle’s motion is influenced by deterministic forces from a potential field, frictional damping from its medium, and random thermal noise. These effects are modeled using the Langevin equation, which balances these forces to describe the system's trajectory. The thermal noise in this equation satisfies the fluctuation-dissipation theorem, ensuring that energy lost due to damping is replenished by thermal fluctuations, maintaining the system at equilibrium. This framework is used to study systems under non-equilibrium conditions, capturing both predictable and random behaviors.
