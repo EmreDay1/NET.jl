@@ -531,6 +531,38 @@ end
 
 ```
 
+### Non-equlibrium potential calculation
+
+<img width="717" alt="Ekran Resmi 2024-11-25 13 21 13" src="https://github.com/user-attachments/assets/af0fa8c8-66fa-41aa-a206-9c87d2cfb14f">
+
+The non-equilibrium potential is a key concept in understanding systems driven by both deterministic forces (drift) and stochastic effects (diffusion). It provides a scalar representation of the "landscape" that governs system dynamics, highlighting stable points, basins of attraction, and transition regions.
 
 
+```julia
+
+using LinearAlgebra
+
+"""
+    calculate_non_equilibrium_potential(grid, drift, diffusion)
+
+Calculates the non-equilibrium potential landscape for a given drift and diffusion.
+
+# Arguments
+- grid::Vector{Float64}: Spatial grid for the potential.
+- drift::Function: Drift function, `drift(x)`.
+- diffusion::Float64: Diffusion coefficient.
+
+# Returns
+- potential::Vector{Float64}: Non-equilibrium potential landscape.
+"""
+function calculate_non_equilibrium_potential(grid, drift, diffusion)
+    potential = zeros(length(grid))
+    for i in 2:length(grid)
+        dx = grid[i] - grid[i-1]
+        potential[i] = potential[i-1] + drift(grid[i]) * dx / diffusion
+    end
+    return potential
+end
+
+```
 
