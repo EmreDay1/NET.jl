@@ -566,3 +566,35 @@ end
 
 ```
 
+### Noise Induced Bifurications
+
+<img width="714" alt="Ekran Resmi 2024-11-25 13 30 26" src="https://github.com/user-attachments/assets/c0feee82-620c-442d-9ed9-37be4730c32f">
+<img width="728" alt="Ekran Resmi 2024-11-25 13 30 37" src="https://github.com/user-attachments/assets/14c96878-8a31-4057-92ef-2e6543b918d4">
+
+Bifurcations represent critical transitions in a system’s dynamics, where small changes in parameters or conditions can cause a qualitative shift in behavior. Noise-induced bifurcations occur when stochastic fluctuations interact with the deterministic dynamics, altering stability points or system attractors.
+
+```julia
+
+"""
+    detect_bifurcation(drift, noise_level, x_range)
+
+Detects noise-induced bifurcations in a stochastic system.
+
+# Arguments
+- drift::Function: Drift function, `drift(x)`.
+- noise_level::Float64: Noise strength.
+- x_range::Vector{Float64}: Spatial range.
+
+# Returns
+- bifurcation_points::Vector{Float64}: Points of bifurcation.
+"""
+function detect_bifurcation(drift, noise_level, x_range)
+    bifurcation_points = []
+    for x in x_range
+        if abs(drift(x)) < noise_level
+            push!(bifurcation_points, x)
+        end
+    end
+    return bifurcation_points
+end
+``
