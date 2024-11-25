@@ -494,4 +494,43 @@ end
 
 ```
 
+### Path Integrals in context of NET
+
+<img width="734" alt="Ekran Resmi 2024-11-25 13 07 56" src="https://github.com/user-attachments/assets/af8e870b-b2c4-4198-a52e-76d2ba23802e">
+
+The Action Functional quantifies the likelihood of a stochastic path in a system governed by drift and diffusion dynamics. It arises from the stochastic action principle, where paths that minimize the action correspond to those with the highest probabilities in the stochastic system.
+
+The calculate_action function evaluates the action for a given trajectory by discretizing the integral that defines the action functional. This involves both the contribution from the drift term and the deviation term due to diffusion
+
+```julia
+
+using Optim
+
+"""
+    calculate_action(path, drift, diffusion)
+
+Calculates the action functional for a given path in a stochastic system.
+
+# Arguments
+- path::Vector{Float64}: The trajectory of the system.
+- drift::Function: Drift function, `drift(x)`.
+- diffusion::Float64: Diffusion coefficient.
+
+# Returns
+- action::Float64: The action value.
+"""
+function calculate_action(path, drift, diffusion)
+    action = 0.0
+    for i in 1:(length(path) - 1)
+        dx = path[i+1] - path[i]
+        drift_term = drift(path[i]) * dx / diffusion
+        action += (dx^2 / (2 * diffusion)) + drift_term
+    end
+    return action
+end
+
+```
+
+
+
 
