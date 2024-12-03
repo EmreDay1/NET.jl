@@ -7,6 +7,7 @@
 ### * Onsager Relations
 ### * Entropy Production
 ### * Stohcastic Thermodynamics
+### * Geometrothermodynamics
 
 
 ## Introduction
@@ -597,4 +598,8 @@ function detect_bifurcation(drift, noise_level, x_range)
     end
     return bifurcation_points
 end
-``
+```
+
+
+### Geometrothermodynamics
+
