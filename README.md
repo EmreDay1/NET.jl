@@ -694,3 +694,5 @@ end
 
 ### Legendre Transformations
 
+The Legendre transformation is a mathematical technique used to switch between different thermodynamic potentials, which are functions describing the energy state of a system with respect to different sets of independent variables. 
+
