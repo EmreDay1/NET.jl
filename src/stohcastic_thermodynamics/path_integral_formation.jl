@@ -17,7 +17,7 @@ function calculate_action(path, drift, diffusion)
     action = 0.0
     for i in 1:(length(path) - 1)
         dx = path[i+1] - path[i]
-        drift_term = drift(path[i]) * dx / diffusion
+        drift_term = (drift(path[i])^2 / (2 * diffusion)) - drift(path[i]) * dx / diffusion
         action += (dx^2 / (2 * diffusion)) + drift_term
     end
     return action
